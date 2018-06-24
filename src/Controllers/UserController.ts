@@ -19,7 +19,7 @@ export const Login = async (request: Request, response: Response) => {
 			Password: request.params.password,
 		})
 		if (user) {
-			response.json(user)
+			response.contentType('application/json').json(user)
 		} else {
 			response.sendStatus(404)
 		}
@@ -32,7 +32,7 @@ export const GetWorld = async (request: Request, response: Response) => {
 	try {
 		const user = await User.findById(request.params.userId)
 		if (user) {
-			response.json(user.World)
+			response.contentType('application/json').json(user.World)
 		} else {
 			response.sendStatus(404)
 		}
