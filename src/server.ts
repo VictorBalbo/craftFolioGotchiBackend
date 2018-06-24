@@ -6,7 +6,7 @@ import { Route } from './Routes/Route'
 const app = express()
 const mongoose = require('mongoose')
 
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 8081
 
 export class Server {
 	constructor() {
@@ -15,6 +15,15 @@ export class Server {
 
 		app.use(bodyParser.urlencoded({ extended: true }))
 		app.use(bodyParser.json())
+
+		app.use(function(req, res, next) {
+			res.header('Access-Control-Allow-Origin', '*')
+			res.header(
+				'Access-Control-Allow-Headers',
+				'Origin, X-Requested-With, Content-Type, Accept',
+			)
+			next()
+		})
 	}
 
 	start() {

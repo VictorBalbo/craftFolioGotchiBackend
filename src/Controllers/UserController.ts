@@ -15,14 +15,10 @@ export const ListUsers = async (request: Request, response: Response) => {
 export const Login = async (request: Request, response: Response) => {
 	try {
 		const user = await User.findOne({
-			Login: request.params.login,
-			Password: request.params.password,
+			Login: request.body.login,
+			Password: request.body.password,
 		})
-		if (user) {
-			response.contentType('application/json').json(user)
-		} else {
-			response.sendStatus(404)
-		}
+		response.json(user)
 	} catch (error) {
 		response.send(error)
 	}
@@ -32,9 +28,9 @@ export const GetWorld = async (request: Request, response: Response) => {
 	try {
 		const user = await User.findById(request.params.userId)
 		if (user) {
-			response.contentType('application/json').json(user.World)
+			response.json(user.World)
 		} else {
-			response.sendStatus(404)
+			response.send(null)
 		}
 	} catch (error) {
 		response.send(error)
@@ -43,7 +39,14 @@ export const GetWorld = async (request: Request, response: Response) => {
 
 export const CreateUser = async (request: Request, response: Response) => {
 	try {
-		const user = new User(request.body)
+		let user = await User.findOne({
+			Login: request.body.login,
+		})
+		if (user) {
+			response.send('Usuario ja cadastrado')
+			return
+		}
+		user = new User(request.body)
 		user._id = v4()
 		await user.save()
 		response.sendStatus(200)

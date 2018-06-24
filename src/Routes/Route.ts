@@ -3,11 +3,12 @@ import { Login, CreateUser, ListUsers, SetWorld, GetWorld } from '../Controllers
 
 export const Route = (app: Express) => {
 	app.route('/users').get(ListUsers)
-	app.route('/user/:login/:password').get(Login)
 	app.route('/user/:userId').get(GetWorld)
-	app.route('/user/').post(CreateUser)
-	app.route('/user/:userId').post(SetWorld)
-
+	app.route('/user/').post(CreateUser).options(CreateUser)
+	app.route('/user/:userId').post(SetWorld).options(SetWorld)
+	
+	app.route('/login').post(Login).options(Login)
+	
 	app.route('/').get((request, response) => {
 		response.send('Hello world!')
 	})
