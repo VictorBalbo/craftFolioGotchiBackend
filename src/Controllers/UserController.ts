@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { User } from '../Models/User'
 import { v4 } from 'uuid'
 import { World } from '../Models/World'
+import { CONSTANTS } from '../Constants'
 
 export const ListUsers = async (request: Request, response: Response) => {
 	try {
@@ -15,8 +16,8 @@ export const ListUsers = async (request: Request, response: Response) => {
 export const Login = async (request: Request, response: Response) => {
 	try {
 		const user = await User.findOne({
-			Login: request.body.login,
-			Password: request.body.password,
+			Login: request.body.Login,
+			Password: request.body.Password,
 		})
 		response.json(user)
 	} catch (error) {
@@ -26,7 +27,9 @@ export const Login = async (request: Request, response: Response) => {
 
 export const GetWorld = async (request: Request, response: Response) => {
 	try {
+		console.log(request.params.userId)
 		const user = await User.findById(request.params.userId)
+		console.log(user)
 		if (user) {
 			response.json(user.World)
 		} else {
@@ -40,16 +43,17 @@ export const GetWorld = async (request: Request, response: Response) => {
 export const CreateUser = async (request: Request, response: Response) => {
 	try {
 		let user = await User.findOne({
-			Login: request.body.login,
+			Login: request.body.Login,
 		})
 		if (user) {
-			response.send('Usuario ja cadastrado')
+			response.status(400).send('Usuario ja cadastrado')
 			return
 		}
 		user = new User(request.body)
+		user.Password = Buffer.from(user.Password).toString(CONSTANTS.ENCODING)
 		user._id = v4()
 		await user.save()
-		response.sendStatus(200)
+		response.send(user)
 	} catch (error) {
 		response.send(error)
 	}
